@@ -1,20 +1,17 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Login / Register</title>
   <style>
     .flash {
-      position: fixed;
-      top: 20px; right: 20px;
-      padding: 10px 15px;
-      border-radius: 5px;
-      color: #fff;
-      background: #4CAF50;
-      opacity: 0.95;
-      transition: opacity 0.5s;
+      position: fixed; top:20px; right:20px;
+      padding:10px 14px; border-radius:6px; color:#fff;
+      background:#4CAF50; opacity:0.95;
+      transition:opacity .3s;
     }
-    .flash.error { background: #f44336; }
+    .flash.error { background:#f44336; }
   </style>
 </head>
 <body>
@@ -35,22 +32,16 @@
   </form>
 
   <script>
-    // ambil parameter msg dari URL
     const urlParams = new URLSearchParams(window.location.search);
     const msg = urlParams.get("msg");
     const flash = document.getElementById("flash");
 
     if (msg) {
-      if (msg === "register") {
-        flash.textContent = "Success Register";
-        flash.classList.remove("error");
-      } else if (msg === "login") {
-        flash.textContent = "Success Login";
-        flash.classList.remove("error");
-      } else if (msg === "fail") {
-        flash.textContent = "Login gagal!";
-        flash.classList.add("error");
-      }
+      if (msg === "register") { flash.textContent = "Success Register"; flash.classList.remove("error"); }
+      else if (msg === "login") { flash.textContent = "Success Login"; flash.classList.remove("error"); }
+      else if (msg === "upload_ok") { flash.textContent = "Upload berhasil"; flash.classList.remove("error"); }
+      else { flash.textContent = msg; flash.classList.add("error"); }
+
       flash.style.display = "block";
       setTimeout(() => flash.style.opacity = "0", 2500);
       setTimeout(() => flash.style.display = "none", 3000);
