@@ -6,21 +6,24 @@ export default function handler(req, res) {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const filePath = path.join(process.cwd(), "users.json");
-  let users = [];
-
-  if (fs.existsSync(filePath)) {
-    users = JSON.parse(fs.readFileSync(filePath, "utf8"));
-  }
-
   const { username, password } = req.body;
-
-  if (users.find(u => u.username === username)) {
-    return res.status(400).json({ message: "Username already exists" });
+  if (!username || !password) {
+    return res.status(400).json({ message: "Username and password required" });
   }
 
-  users.push({ username, password });
-  fs.writeFileSync(filePath, JSON.stringify(users, null, 2));
+  const userFile = path.join(process.cwd(), "data", `${username}.json`);
+
+  // Cek kalau user sudah ada
+  if (fs.existsSync(userFile)) {
+    return res.status(400).json({ message: "User already exists" });
+  }
+
+  // Encode password pakai Base64
+  const encodedPw = Buffer.from(password).toString("base64");
+
+  // Simpan ke file
+  fs.mkdirSync(path.dirname(userFile), { recursive: true });
+  fs.writeFileSync(userFile, JSON.stringify({ password: encodedPw }, null, 2));
 
   return res.status(200).json({ message: "Success Register" });
 }
