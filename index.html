@@ -4,62 +4,72 @@
   <meta charset="UTF-8">
   <title>Login/Register</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 40px; }
-    .box { max-width: 300px; margin: auto; padding: 20px; border: 1px solid #ccc; }
+    body { font-family: Arial; text-align: center; margin-top: 100px; }
     .bubble {
-      position: fixed; top: 20px; right: 20px;
-      background: #4caf50; color: white; padding: 10px 20px;
-      border-radius: 5px; display: none;
+      position: fixed;
+      top: 20px; right: 20px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      color: #fff;
+      display: none;
     }
+    .success { background: #28a745; }
+    .error { background: #dc3545; }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h2>Register</h2>
-    <input id="reg_user" placeholder="Username"><br><br>
-    <input id="reg_pass" type="password" placeholder="Password"><br><br>
-    <button onclick="register()">Register</button>
-    <hr>
-    <h2>Login</h2>
-    <input id="log_user" placeholder="Username"><br><br>
-    <input id="log_pass" type="password" placeholder="Password"><br><br>
-    <button onclick="login()">Login</button>
-  </div>
+  <h2>Login / Register</h2>
+  <input id="username" placeholder="Username"><br><br>
+  <input id="password" type="password" placeholder="Password"><br><br>
+  <button onclick="register()">Register</button>
+  <button onclick="login()">Login</button>
 
   <div id="bubble" class="bubble"></div>
 
   <script>
+    function showBubble(msg, type) {
+      const bubble = document.getElementById("bubble");
+      bubble.innerText = msg;
+      bubble.className = "bubble " + type;
+      bubble.style.display = "block";
+      setTimeout(() => bubble.style.display = "none", 3000);
+    }
+
     async function register() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
       const res = await fetch("/api/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: document.getElementById("reg_user").value,
-          password: document.getElementById("reg_pass").value
-        })
+        body: JSON.stringify({ username, password })
       });
       const data = await res.json();
-      showBubble(data.message);
+
+      if (res.ok) {
+        showBubble("Success Register", "success");
+      } else {
+        showBubble(data.error || "Register gagal", "error");
+      }
     }
 
     async function login() {
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
       const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          username: document.getElementById("log_user").value,
-          password: document.getElementById("log_pass").value
-        })
+        body: JSON.stringify({ username, password })
       });
       const data = await res.json();
-      showBubble(data.message);
-    }
 
-    function showBubble(msg) {
-      const b = document.getElementById("bubble");
-      b.innerText = msg;
-      b.style.display = "block";
-      setTimeout(() => b.style.display = "none", 2000);
+      if (res.ok) {
+        showBubble("Success Login", "success");
+        setTimeout(() => window.location.href = "/dashboard.html?user=" + username, 1500);
+      } else {
+        showBubble(data.error || "Login gagal", "error");
+      }
     }
   </script>
 </body>
