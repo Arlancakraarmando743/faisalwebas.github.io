@@ -6,17 +6,20 @@ export default function handler(req, res) {
     return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const filePath = path.join(process.cwd(), "users.json");
-  if (!fs.existsSync(filePath)) {
-    return res.status(400).json({ message: "No users registered yet" });
+  const { username, password } = req.body;
+  if (!username || !password) {
+    return res.status(400).json({ message: "Username and password required" });
   }
 
-  const users = JSON.parse(fs.readFileSync(filePath, "utf8"));
-  const { username, password } = req.body;
+  const userFile = path.join(process.cwd(), "data", `${username}.json`);
+  if (!fs.existsSync(userFile)) {
+    return res.status(400).json({ message: "User not found" });
+  }
 
-  const user = users.find(u => u.username === username && u.password === password);
+  const userData = JSON.parse(fs.readFileSync(userFile, "utf8"));
+  const decodedPw = Buffer.from(userData.password, "base64").toString("utf8");
 
-  if (!user) {
+  if (decodedPw !== password) {
     return res.status(401).json({ message: "Invalid credentials" });
   }
 
