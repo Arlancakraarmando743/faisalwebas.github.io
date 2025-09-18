@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Login / Register</title>
+  <style>
+    .flash {
+      position: fixed;
+      top: 20px; right: 20px;
+      padding: 10px 15px;
+      border-radius: 5px;
+      color: #fff;
+      background: #4CAF50;
+      opacity: 0.95;
+      transition: opacity 0.5s;
+    }
+    .flash.error { background: #f44336; }
+  </style>
+</head>
+<body>
+  <div id="flash" class="flash" style="display:none;"></div>
+
+  <h2>Register</h2>
+  <form action="register.php" method="post">
+    <input name="username" type="text" placeholder="Username" required><br>
+    <input name="password" type="password" placeholder="Password" required><br>
+    <button type="submit">Daftar</button>
+  </form>
+
+  <h2>Login</h2>
+  <form action="login.php" method="post">
+    <input name="username" type="text" placeholder="Username" required><br>
+    <input name="password" type="password" placeholder="Password" required><br>
+    <button type="submit">Login</button>
+  </form>
+
+  <script>
+    // ambil parameter msg dari URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const msg = urlParams.get("msg");
+    const flash = document.getElementById("flash");
+
+    if (msg) {
+      if (msg === "register") {
+        flash.textContent = "Success Register";
+        flash.classList.remove("error");
+      } else if (msg === "login") {
+        flash.textContent = "Success Login";
+        flash.classList.remove("error");
+      } else if (msg === "fail") {
+        flash.textContent = "Login gagal!";
+        flash.classList.add("error");
+      }
+      flash.style.display = "block";
+      setTimeout(() => flash.style.opacity = "0", 2500);
+      setTimeout(() => flash.style.display = "none", 3000);
+    }
+  </script>
+</body>
+</html>
