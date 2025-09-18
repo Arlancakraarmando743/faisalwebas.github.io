@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Login/Register</title>
+  <title>Faisal Website</title>
   <style>
     body { font-family: Arial; text-align: center; margin-top: 100px; }
     .bubble {
@@ -43,7 +43,7 @@
       if (!username || !password) return showBubble("Isi semua field!", "error");
 
       try {
-        const res = await fetch("/api/register", {
+        const res = await fetch("/api/register.js", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password })
@@ -65,7 +65,7 @@
       if (!username || !password) return showBubble("Isi semua field!", "error");
 
       try {
-        const res = await fetch("/api/login", {
+        const res = await fetch("/api/login.js", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ username, password })
@@ -84,3 +84,4 @@
   </script>
 </body>
 </html>
+
