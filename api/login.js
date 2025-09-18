@@ -1,7 +1,4 @@
-import fs from "fs";
-import path from "path";
-
-export default function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not allowed" });
   }
@@ -11,13 +8,26 @@ export default function handler(req, res) {
     return res.status(400).json({ message: "Username and password required" });
   }
 
-  const userFile = path.join(process.cwd(), "data", `${username}.json`);
-  if (!fs.existsSync(userFile)) {
+  const repoOwner = process.env.VERCEL_GIT_REPO_OWNER;
+  const repoName = process.env.VERCEL_GIT_REPO_SLUG;
+  const filePath = `users/${username}.json`;
+
+  const response = await fetch(
+    `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`,
+    {
+      headers: {
+        "Authorization": `token ${process.env.GITHUB_TOKEN}`,
+        "Accept": "application/vnd.github.v3.raw",
+      },
+    }
+  );
+
+  if (response.status === 404) {
     return res.status(400).json({ message: "User not found" });
   }
 
-  const userData = JSON.parse(fs.readFileSync(userFile, "utf8"));
-  const decodedPw = Buffer.from(userData.password, "base64").toString("utf8");
+  const data = await response.json();
+  const decodedPw = Buffer.from(data.password, "base64").toString("utf8");
 
   if (decodedPw !== password) {
     return res.status(401).json({ message: "Invalid credentials" });
