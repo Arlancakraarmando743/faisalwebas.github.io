@@ -1,50 +1,65 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Login / Register</title>
+  <meta charset="UTF-8">
+  <title>Login/Register</title>
   <style>
-    .flash {
-      position: fixed; top:20px; right:20px;
-      padding:10px 14px; border-radius:6px; color:#fff;
-      background:#4CAF50; opacity:0.95;
-      transition:opacity .3s;
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    .box { max-width: 300px; margin: auto; padding: 20px; border: 1px solid #ccc; }
+    .bubble {
+      position: fixed; top: 20px; right: 20px;
+      background: #4caf50; color: white; padding: 10px 20px;
+      border-radius: 5px; display: none;
     }
-    .flash.error { background:#f44336; }
   </style>
 </head>
 <body>
-  <div id="flash" class="flash" style="display:none;"></div>
+  <div class="box">
+    <h2>Register</h2>
+    <input id="reg_user" placeholder="Username"><br><br>
+    <input id="reg_pass" type="password" placeholder="Password"><br><br>
+    <button onclick="register()">Register</button>
+    <hr>
+    <h2>Login</h2>
+    <input id="log_user" placeholder="Username"><br><br>
+    <input id="log_pass" type="password" placeholder="Password"><br><br>
+    <button onclick="login()">Login</button>
+  </div>
 
-  <h2>Register</h2>
-  <form action="register.php" method="post">
-    <input name="username" type="text" placeholder="Username" required><br>
-    <input name="password" type="password" placeholder="Password" required><br>
-    <button type="submit">Daftar</button>
-  </form>
-
-  <h2>Login</h2>
-  <form action="login.php" method="post">
-    <input name="username" type="text" placeholder="Username" required><br>
-    <input name="password" type="password" placeholder="Password" required><br>
-    <button type="submit">Login</button>
-  </form>
+  <div id="bubble" class="bubble"></div>
 
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const msg = urlParams.get("msg");
-    const flash = document.getElementById("flash");
+    async function register() {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: document.getElementById("reg_user").value,
+          password: document.getElementById("reg_pass").value
+        })
+      });
+      const data = await res.json();
+      showBubble(data.message);
+    }
 
-    if (msg) {
-      if (msg === "register") { flash.textContent = "Success Register"; flash.classList.remove("error"); }
-      else if (msg === "login") { flash.textContent = "Success Login"; flash.classList.remove("error"); }
-      else if (msg === "upload_ok") { flash.textContent = "Upload berhasil"; flash.classList.remove("error"); }
-      else { flash.textContent = msg; flash.classList.add("error"); }
+    async function login() {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          username: document.getElementById("log_user").value,
+          password: document.getElementById("log_pass").value
+        })
+      });
+      const data = await res.json();
+      showBubble(data.message);
+    }
 
-      flash.style.display = "block";
-      setTimeout(() => flash.style.opacity = "0", 2500);
-      setTimeout(() => flash.style.display = "none", 3000);
+    function showBubble(msg) {
+      const b = document.getElementById("bubble");
+      b.innerText = msg;
+      b.style.display = "block";
+      setTimeout(() => b.style.display = "none", 2000);
     }
   </script>
 </body>
