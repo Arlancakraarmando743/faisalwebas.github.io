@@ -1,37 +1,43 @@
+import fetch from "node-fetch";
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
-    return res.status(405).json({ message: "Method not allowed" });
+    return res.status(405).json({ error: "Only POST allowed" });
   }
 
   const { username, password } = req.body;
   if (!username || !password) {
-    return res.status(400).json({ message: "Username and password required" });
+    return res.status(400).json({ error: "Username & password required" });
   }
 
-  const repoOwner = process.env.VERCEL_GIT_REPO_OWNER;
-  const repoName = process.env.VERCEL_GIT_REPO_SLUG;
-  const filePath = `users/${username}.json`;
+  const token = process.env.GITHUB_TOKEN;
+  const owner = process.env.VERCEL_GIT_REPO_OWNER;
+  const repo = process.env.VERCEL_GIT_REPO_SLUG;
+  const userFilePath = `users/${username}.json`;
 
-  const response = await fetch(
-    `https://api.github.com/repos/${repoOwner}/${repoName}/contents/${filePath}`,
-    {
-      headers: {
-        "Authorization": `token ${process.env.GITHUB_TOKEN}`,
-        "Accept": "application/vnd.github.v3.raw",
-      },
+  try {
+    const resp = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}/contents/${userFilePath}`,
+      {
+        headers: { Authorization: `token ${token}` },
+      }
+    );
+
+    if (!resp.ok) {
+      return res.status(400).json({ error: "User not found" });
     }
-  );
 
-  if (response.status === 404) {
-    return res.status(400).json({ message: "User not found" });
+    const data = await resp.json();
+    const fileContent = Buffer.from(data.content, "base64").toString("utf-8");
+    const userData = JSON.parse(fileContent);
+
+    const encodedPw = Buffer.from(password).toString("base64");
+    if (userData.password !== encodedPw) {
+      return res.status(401).json({ error: "Invalid password" });
+    }
+
+    return res.status(200).json({ success: true, message: "Login success!" });
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
   }
-
-  const data = await response.json();
-  const decodedPw = Buffer.from(data.password, "base64").toString("utf8");
-
-  if (decodedPw !== password) {
-    return res.status(401).json({ message: "Invalid credentials" });
-  }
-
-  return res.status(200).json({ message: "Success Login" });
 }
