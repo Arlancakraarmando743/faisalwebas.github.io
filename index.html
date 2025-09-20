@@ -1,87 +1,330 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Faisal Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Selamat 1 Tahun Untuk Kita</title>
   <style>
-    body { font-family: Arial; text-align: center; margin-top: 100px; }
-    .bubble {
-      position: fixed;
-      top: 20px; right: 20px;
-      padding: 10px 20px;
-      border-radius: 8px;
-      color: #fff;
-      display: none;
-      z-index: 999;
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      font-family: "Arial", sans-serif;
+      color: white;
+      text-align: center;
+      overflow: hidden;
     }
-    .success { background: #28a745; }
-    .error { background: #dc3545; }
+
+    /* ================= SLIDE 1 (Intro) ================= */
+    #intro {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      z-index: 10;
+      transition: opacity 1.5s ease, transform 1.5s ease;
+      overflow: hidden;
+    }
+    #intro.hide {
+      opacity: 0;
+      transform: scale(1.2);
+      pointer-events: none;
+    }
+    #startBtn {
+      padding: 15px 30px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 10px;
+      background: white;
+      color: #ff1e78;
+      cursor: pointer;
+      z-index: 11;
+      box-shadow: 0 0 20px rgba(255,0,150,0.8);
+    }
+    #startBtn:hover { background: #ffe1ef; }
+
+    /* Efek Love & Bintang jatuh */
+    .fall {
+      position: absolute;
+      top: -50px;
+      animation: fall linear forwards;
+      text-shadow: 0 0 15px #fff, 0 0 30px #ff00ff;
+    }
+    @keyframes fall {
+      to {
+        transform: translateY(110vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Matahari & Planet */
+    .sun {
+      position: absolute;
+      top: 40px; right: 60px;
+      width: 100px; height: 100px;
+      background: radial-gradient(circle, #fff799, #ffdb4d, #ffb84d);
+      border-radius: 50%;
+      box-shadow: 0 0 40px #ffec99, 0 0 80px #ffd633;
+      animation: sunPulse 5s infinite alternate;
+    }
+    @keyframes sunPulse { from { transform: scale(1);} to { transform: scale(1.1);} }
+    .planet {
+      position: absolute;
+      bottom: 80px; left: 20%;
+      width: 120px; height: 120px;
+      background: radial-gradient(circle at 30% 30%, #6cf, #039);
+      border-radius: 50%;
+      box-shadow: inset -20px -20px 40px rgba(0,0,0,0.5),
+                  0 0 30px #69f, 0 0 60px #36f;
+      animation: planetSpin 60s linear infinite;
+    }
+    @keyframes planetSpin { from { transform: rotate(0);} to { transform: rotate(360deg);} }
+
+    /* ================= SLIDE 2 (Video + Puisi) ================= */
+    #content {
+      display: none;
+      position: relative;
+      width: 100%; height: 100%;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+    #content.show { display: flex; opacity: 1; }
+    .video-bg {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: -2;
+    }
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      z-index: -1;
+      pointer-events: none;
+    }
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 5px black;
+      position: relative;
+      z-index: 2;
+    }
+    p.puisi {
+      font-size: 1.1em;
+      line-height: 1.6;
+      white-space: pre-line;
+      text-shadow: 1px 1px 3px black;
+      max-width: 700px;
+      position: relative;
+      z-index: 2;
+    }
+    #fotoBtn {
+      padding: 12px 25px;
+      font-size: 1em;
+      margin-top: 25px;
+      border: none;
+      border-radius: 10px;
+      background: #fff;
+      color: #ff1e78;
+      cursor: pointer;
+      box-shadow: 0 0 15px rgba(255,0,150,0.7);
+      position: relative;
+      z-index: 2;
+      display: none; /* 🔥 awalnya disembunyikan */
+    }
+    #fotoBtn:hover { background: #ffe1ef; }
+
+    /* ================= SLIDE 3 (Slideshow Foto) ================= */
+    #gallery {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: radial-gradient(ellipse at bottom, #0d0d2b 0%, #000 100%);
+      overflow: hidden;
+      z-index: 20;
+      flex-direction: column; 
+      align-items: center; 
+      justify-content: center; 
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+    #gallery.show { display: flex; opacity: 1; }
+
+    #gallery h2 {
+      margin: 10px;
+      text-shadow: 2px 2px 5px black;
+    }
+
+    .slideshow {
+      width: 600px;
+      height: 400px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 15px;
+      box-shadow: 0 0 25px rgba(255,255,255,0.9);
+    }
+
+    .slideshow img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      position: absolute;
+      top: 0; left: 0;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    .slideshow img.active {
+      opacity: 1;
+    }
+
+    #backBtn {
+      margin-top: 30px;
+      padding: 12px 28px;
+      border: none;
+      border-radius: 10px;
+      background: white;
+      color: #ff1e78;
+      cursor: pointer;
+      font-size: 1.1em;
+      box-shadow: 0 0 15px rgba(255,0,150,0.8);
+    }
+    #backBtn:hover { background: #ffe1ef; }
   </style>
 </head>
 <body>
-  <h2>Login / Register</h2>
-  <input id="username" placeholder="Username"><br><br>
-  <input id="password" type="password" placeholder="Password"><br><br>
-  <!-- pastikan type="button" supaya ga reload halaman -->
-  <button type="button" onclick="register()">Register</button>
-  <button type="button" onclick="login()">Login</button>
+  <!-- SLIDE 1 -->
+  <div id="intro">
+    <div class="sun"></div>
+    <div class="planet"></div>
+    <button id="startBtn">Mulai</button>
+  </div>
 
-  <div id="bubble" class="bubble"></div>
+  <!-- SLIDE 2 -->
+  <div id="content">
+    <video autoplay muted loop class="video-bg">
+      <source src="video.mp4" type="video/mp4">
+    </video>
+    <div class="overlay"></div>
+    <h1>Selamat 1 Tahun Untuk Kita Berdua 💕</h1>
+    <p class="puisi" id="puisi"></p>
+    <button id="fotoBtn">Click Foto</button>
+  </div>
+
+  <!-- SLIDE 3 -->
+  <div id="gallery">
+    <h2>Kenangan Kita 📸</h2>
+    <div class="slideshow" id="slideshow"></div>
+    <button id="backBtn">Kembali</button>
+  </div>
+
+  <!-- Musik -->
+  <audio id="musik" loop>
+    <source src="lagu.mp3" type="audio/mpeg">
+  </audio>
 
   <script>
-    function showBubble(msg, type) {
-      const bubble = document.getElementById("bubble");
-      bubble.innerText = msg;
-      bubble.className = "bubble " + type;
-      bubble.style.display = "block";
-      setTimeout(() => bubble.style.display = "none", 3000);
-    }
+    const musik = document.getElementById("musik");
+    const intro = document.getElementById("intro");
+    const content = document.getElementById("content");
+    const gallery = document.getElementById("gallery");
+    const slideshow = document.getElementById("slideshow");
+    const puisiElement = document.getElementById("puisi");
+    const fotoBtn = document.getElementById("fotoBtn");
 
-    async function register() {
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-      if (!username || !password) return showBubble("Isi semua field!", "error");
+    const puisiText = `Selamat 1 Tahun Ya Sayanggggggggggggggg Aku Bersyukur Kita Udah Sejauh Ini  Dari Banyaknya Masalah Dan RIntangan Kita Akhirnya Bisa Sampe Di Titik Ini Dan Masih Banyak Yang Harus Kita Lalui Berdua, Ga Nyangka Bisa Sejauh Ini Kita, Lucu Dari Awal Yang Ngata Ngatain Sampe Pacaran Dan Bisa Sampe Sejauh Ini, Aku Beruntung Banget Punya Cewe Kayak Kamu Yang Ga Gampang Nyerah, Dan Maaffff Kalo Aku Masih Ngebuat Kamu Kecewa Atau Nangis, Kedepannya Aku Gabakal Buat Kamu Nangiss Lagi, Aku.
+Semoga Kita Bisa Ngehadepin Masalahnya Berdua Yaaaaaaaaaaaaaa, Gada Ego Yaaa Jadi Kalo Ada Masalah Bakal Tetep Komunikasi Kayak Kemaren.
+Maaaf Yah Kalo Aku Belom Bisa Jadi Cowo Yang Kamu Mauu, Aku Bakal Usahainnn Ituuuuuuuuuuuuuuuuu Makasihhhh Yahhhh,
+I'm Very Lucky To Have A Girl Like Youuuuuuuuuuuuuuu
+And I won't leave you, I love you, Hopefully I will always be in your heart.
+Jenonggggggggggg, Lucuuuuuuuuuuuu, Incessssssssssssssssssssssssss, Bocilllllllllllllllllllll, Imottttttttttttttttttttttttttt, Cantikkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk, Wleeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee`;
 
-      try {
-        const res = await fetch("/api/register.js", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          showBubble("Success Register", "success");
-        } else {
-          showBubble(data.error || "Register gagal", "error");
-        }
-      } catch (e) {
-        showBubble("Server error", "error");
+    // Efek ketik (typing animation)
+    let idx = 0;
+    function typeWriter() {
+      if (idx < puisiText.length) {
+        puisiElement.innerHTML += puisiText.charAt(idx);
+        idx++;
+        setTimeout(typeWriter, 50); // kecepatan ketik
+      } else {
+        // 🔥 Munculkan tombol foto setelah selesai ngetik
+        fotoBtn.style.display = "inline-block";
       }
     }
 
-    async function login() {
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value.trim();
-      if (!username || !password) return showBubble("Isi semua field!", "error");
+    // Buat 10 foto slideshow
+    let currentIndex = 0;
+    const totalFotos = 10;
+    let images = [];
 
-      try {
-        const res = await fetch("/api/login.js", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, password })
-        });
-        const data = await res.json();
-        if (res.ok) {
-          showBubble("Success Login", "success");
-          setTimeout(() => window.location.href = "/dashboard.html?user=" + encodeURIComponent(username), 1500);
-        } else {
-          showBubble(data.error || "Login gagal", "error");
-        }
-      } catch (e) {
-        showBubble("Server error", "error");
-      }
+    for (let i = 1; i <= totalFotos; i++) {
+      const img = document.createElement("img");
+      img.src = `foto/foto${i}.jpg`;
+      if (i === 1) img.classList.add("active");
+      slideshow.appendChild(img);
+      images.push(img);
     }
+
+    function showNext() {
+      images[currentIndex].classList.remove("active");
+      currentIndex = (currentIndex + 1) % totalFotos;
+      images[currentIndex].classList.add("active");
+    }
+    setInterval(showNext, 3000);
+
+    // Slide 1 -> Slide 2
+    document.getElementById("startBtn").addEventListener("click", () => {
+      musik.play();
+      intro.classList.add("hide");
+      setTimeout(() => {
+        intro.style.display = "none";
+        content.classList.add("show");
+        typeWriter(); // mulai efek ketik
+      }, 1500);
+    });
+
+    // Slide 2 -> Slide 3 (pakai animasi fade)
+    fotoBtn.addEventListener("click", () => {
+      content.style.opacity = "0";
+      setTimeout(() => {
+        content.classList.remove("show");
+        gallery.classList.add("show");
+        gallery.style.opacity = "1";
+      }, 1000);
+    });
+
+    // Back ke Slide 2
+    document.getElementById("backBtn").addEventListener("click", () => {
+      gallery.style.opacity = "0";
+      setTimeout(() => {
+        gallery.classList.remove("show");
+        content.classList.add("show");
+        content.style.opacity = "1";
+      }, 1000);
+    });
+
+    // Efek love / bintang jatuh
+    function createFall() {
+      const el = document.createElement("div");
+      el.classList.add("fall");
+      el.innerText = Math.random() > 0.5 ? "✨" : "💖";
+      el.style.left = Math.random() * window.innerWidth + "px";
+      el.style.fontSize = (20 + Math.random() * 20) + "px";
+      el.style.animationDuration = (3 + Math.random() * 4) + "s";
+      document.getElementById("intro").appendChild(el);
+      setTimeout(() => el.remove(), 7000);
+    }
+    setInterval(createFall, 400);
   </script>
 </body>
 </html>
-
